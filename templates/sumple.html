@@ -1,6 +1,7 @@
 {% extends"base.html" %}
 {% block content %}
-<script language="JavaScript"><!--
+<script language="JavaScript">
+<!--
 
     myCnt = 0;
     var array = []; // 秒(単位：10ms)
@@ -195,12 +196,19 @@
     // --></script>
 
 <form name="myForm">
-    <table id="myTable" border="1" cellpadding="0" cellspacing="0" bgcolor="yellow" bordercolordark="#808000" bordercolorlight="#FFFF00">
+    
+    <table id="myTable" border="1" cellpadding="1" cellspacing="0"  bordercolordark="#808000" bordercolorlight="#FFFF00">
+       
 	<thead>
+            
+       
 		<tr>
-			<td align="center" colspan="2" bgcolor="red"><font color="#FFFFFF"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">sumple-v</font></font></font></td>
-			<td align="center"><font style="vertical-align: inherit;"></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input type="button" value="clear" onclick="myUndo()"></font><font style="vertical-align: inherit;"><input type="button" value="Reset" onclick="myAllC()"></font></font></td>
+			<td align="center" colspan="1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">test-v</font></font></font></td>
+			<td align="center" colspan="2"><font style="vertical-align: inherit;"></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input type="button" value="clear" onclick="myUndo()"></font>
+                <font style="vertical-align: inherit;"><input type="button" value="Reset" onclick="myAllC()"></font></font></td>
+
 		</tr>
+        
 		<tr>
 			<td align="center" width="20%" height="30"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">[M]</font></font></td>
 			<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">sprit</font></font></td>
@@ -213,9 +221,10 @@
 			<td align="center" class="cl_mySpl"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--</font></font></td>
 			<td align="center" class="cl_myLap"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--</font></font></td>
 		</tr>
+   
 	</tbody>
     </table>
-    <table id="myTable2" height="120" border="1" cellpadding="0" cellspacing="0" bgcolor="yellow" bordercolordark="#808000" bordercolorlight="#FFFF00">
+    <table id="myTable2" height="120" border="1" cellpadding="4" cellspacing="7"  bordercolordark="#808000" bordercolorlight="#FFFF00">
 	<tfoot>
 		<tr>
 			<td colspan="3" align="center">
@@ -243,6 +252,7 @@
 	</tfoot>
 
     </table>
+
 </form>
     
 {% endblock %}
