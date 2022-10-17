@@ -1,0 +1,248 @@
+{% extends"base.html" %}
+{% block content %}
+<script language="JavaScript"><!--
+
+    myCnt = 0;
+    var array = []; // 秒(単位：10ms)
+    
+    myInput = "";      // 現在入力している値
+    
+    function myValue(myData){     // 0～9ボタンを押した
+        myInput = document.myForm.myLine.value;
+        myInput += myData;         // 現在入力している値に追加
+        document.myForm.myLine.value = myInput; // 現在入力している値表示
+    }
+    
+    function myVal2Str(myVal){ // 配列の数値データを時刻文字列に変換する。
+        var v_out  = ''
+        var v_min  = 0;
+        var v_min1 = 0;
+        var v_sec  = 0;
+        var v_sec1 = 0;
+        var v_sec2 = 0;
+        var v_sec3 = 0;
+        var v_ms   = 0;
+        var v_sPad  = '';
+        var v_msPad = '';
+    
+        v_ms  = eval(myVal) % 100;    // "ミリ秒" の抽出
+        if( v_ms < 10 ) {
+            v_msPad = '0';
+        }
+    
+        v_sec1 = eval(myVal) / 100;   // "秒.10ミリ秒"の抽出
+        v_sec2 = parseInt( v_sec1 );  // "秒(小数点なし)" の抽出
+        v_sec  = eval(v_sec2) % 60;   // "秒" の抽出
+        if( v_sec < 10 ) {
+            v_sPad = '0';
+        }
+    
+        v_min1 = eval(v_sec2) / 60;   // "分(小数点あり)" の抽出
+        v_min = parseInt( v_min1 );   // "分(小数点なし)" の抽出
+    
+        v_str = v_min + ':' + v_sPad + v_sec + '.' + v_msPad + v_ms ;
+    //	v_str = v_min + ':' + v_sPad + v_sec + '.' + '<br>' + v_msPad + v_ms ;
+    
+        return v_str;
+    }
+    
+    function myCalculate(myData){ // 演算ボタンを押した
+    
+        var table = document.getElementById('myTable');
+        var tbody = document.getElementsByTagName('tbody')[0];
+    
+        var my_spl = 0;
+    
+        var v_spl = 0; // 配列格納用(秒、下2桁はミリ秒)
+    
+        var v_min = 0;
+        var v_min1 = 0;
+        var v_sec = 0;
+        var v_sec1 = 0;
+        var v_sec2 = 0;
+        var v_ms = 0;
+    
+        var v_lap = 0;
+        var v_lap2 = 0;
+        var v_tmp = 0;
+    
+        myInput = document.myForm.myLine.value;
+    
+        if( myInput.length == 0 ) {
+            return;
+        }
+    
+        v_min1 = eval(myInput) / 10000; // "分(小数点含む)" の抽出
+        v_min = parseInt( v_min1 );      // "分(小数点なし)" の抽出
+    
+        v_sec1 = eval(myInput) % 10000; // "秒(ミリ秒部を含む)" の抽出
+        v_sec2 = v_sec1 / 100;           // "秒(ミリ秒部削除(小数点を含む))" の抽出
+        v_sec = parseInt( v_sec2 );      // "秒(小数点なし)" の抽出
+    
+        v_ms  = eval(myInput) % 100;    // "ミリ秒" の抽出
+    
+        v_spl = ((v_min * 60) + v_sec) * 100 + v_ms; // 配列格納用データの作成
+    
+        var l = array.length;
+        if( l > 0 ) {
+            if( v_spl < array[l-1] ) {
+                myC();
+                return;
+            }
+        }
+    
+        array.push(v_spl); // 配列に追加
+        myCnt++;
+    
+        while(tbody.childNodes.length > 0){
+            tbody.removeChild(tbody.firstChild);
+        }
+    
+        for( var i=0; i < myCnt; i++ ){
+            var newtr = document.createElement('tr');
+    
+            // Dist.
+            var td = document.createElement('td');
+            td.className = 'myDist';
+            td.innerHTML = (i + 1 ) * 25;
+            newtr.appendChild(td);
+    
+            // Split
+            td = document.createElement('td');
+            td.className = 'mySpl';
+            td.innerHTML = myVal2Str(array[i]);
+            newtr.appendChild(td);
+    
+            // Lap
+            td = document.createElement('td');
+            td.className = 'myLap';
+    
+            switch( i ) {
+              case 0 :
+                td.innerHTML = myVal2Str(array[0]) ;
+                break;
+              case 1 :
+                v_lap = array[1] - array[0];
+                //td.innerHTML = myVal2Str(v_lap) + '<br> [' + myVal2Str(array[1]) + ']';
+                td.innerHTML = myVal2Str(v_lap) + ' [' + myVal2Str(array[1]) + ']';
+                break;
+              default: // 2以上
+                v_lap = array[i] - array[i-1];
+                if( (i % 2) == 1 ) {
+                    v_lap2 = array[i] - array[i-2];
+                    //td.innerHTML = myVal2Str(v_lap) + '<br> [' + myVal2Str(v_lap2) + ']';
+                    td.innerHTML = myVal2Str(v_lap) + ' [' + myVal2Str(v_lap2) + ']';
+                }
+                else {
+                    td.innerHTML = myVal2Str(v_lap) ;
+                }
+                break;
+            }
+    
+            newtr.appendChild(td);
+            tbody.appendChild(newtr);
+    
+            // INPUT クリア
+            myC();
+        }
+    
+    }
+    
+    function myC(){                            // クリアボタンを押した
+       myInput = "";                           // 現在入力している値をクリア
+       document.myForm.myLine.value = '';      // つまり、０を表示
+       // scroll(0, document.getElementsByTagName("FORM")[0].scrollHeight);
+    }
+    
+    function myAllC(){                            // RESETボタンを押した
+        var tbody = document.getElementsByTagName('tbody')[0];
+    
+        //history.go(0);
+    
+        while(tbody.childNodes.length > 0){
+            tbody.removeChild(tbody.firstChild);
+        }
+        array.length = 0;
+        myCnt = 0;
+        myInput = "";
+    }
+    
+    function myUndo(){                            // UNDOボタンを押した
+    
+            // INPUT クリア
+            myC();
+    
+        if( myCnt < 1 ) {
+            return;
+        }
+    
+        var table = document.getElementById('myTable');
+        var tbody = document.getElementsByTagName('tbody')[0];
+    
+        // 配列の最新要素を削除
+        array.splice(myCnt - 1, 1); 
+    
+        // テーブルの最新行を削除する。
+        
+        // tbody.deleterow(myCnt - 1);
+        table.deleteRow(myCnt+1);
+    
+        myCnt--;	// 配列の要素数を減らす
+    
+    }
+    
+    
+    // --></script>
+
+<form name="myForm">
+    <table id="myTable" border="1" cellpadding="0" cellspacing="0" bgcolor="yellow" bordercolordark="#808000" bordercolorlight="#FFFF00">
+	<thead>
+		<tr>
+			<td align="center" colspan="2" bgcolor="red"><font color="#FFFFFF"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">sumple-v</font></font></font></td>
+			<td align="center"><font style="vertical-align: inherit;"></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input type="button" value="clear" onclick="myUndo()"></font><font style="vertical-align: inherit;"><input type="button" value="Reset" onclick="myAllC()"></font></font></td>
+		</tr>
+		<tr>
+			<td align="center" width="20%" height="30"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">[M]</font></font></td>
+			<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">sprit</font></font></td>
+			<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Rap</font></font></td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td align="center" class="cl_myDist"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--</font></font></td>
+			<td align="center" class="cl_mySpl"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--</font></font></td>
+			<td align="center" class="cl_myLap"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">--</font></font></td>
+		</tr>
+	</tbody>
+    </table>
+    <table id="myTable2" height="120" border="1" cellpadding="0" cellspacing="0" bgcolor="yellow" bordercolordark="#808000" bordercolorlight="#FFFF00">
+	<tfoot>
+		<tr>
+			<td colspan="3" align="center">
+				<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input type="button" value="C" onclick="myC()"></font></font> 
+				<input type="text" size="10" style="text-align:right" name="myLine" value=""> 
+			</td>
+			<td colspan="2" align="center">
+				<font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><input type="button" value="ENTER" onclick="myCalculate()"></font></font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" width="16%" height="50"> <a href="javascript:myValue('1')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('2')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('3')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('4')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('5')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5</font></font></a> </td>
+		</tr>
+		<tr>
+			<td align="center" width="16%" height="50"> <a href="javascript:myValue('6')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('7')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('8')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('9')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">9</font></font></a> </td>
+			<td align="center" width="16%"> <a href="javascript:myValue('0')" style="text-decoration: none"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0</font></font></a> </td>
+		</tr>
+	</tfoot>
+
+    </table>
+</form>
+    
+{% endblock %}
